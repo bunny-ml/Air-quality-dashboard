@@ -48,7 +48,7 @@ app.layout = html.Div([
 
 def update_map(_):
 
-      with duckdb.connect("air_quality.db", read_only=True) as db_connection:
+      with duckdb.connect("/workspace/Air-quality-dashboard/notebooks/air_quality.db", read_only=True) as db_connection:
         latest_values_df = db_connection.execute(
             "SELECT * FROM presentation.latest_param_values_per_location"
         ).fetchdf()
@@ -94,7 +94,7 @@ def update_map(_):
     Input("location-dropdown", "id"),
 )
 def update_dropdowns(_):
-    with duckdb.connect("air_quality.db", read_only=True) as db_connection:
+    with duckdb.connect("/workspace/Air-quality-dashboard/notebooks/air_quality.db", read_only=True) as db_connection:
         df = db_connection.execute(
             "SELECT * FROM presentation.daily_air_quality_stats"
         ).fetchdf()
@@ -130,7 +130,7 @@ def update_dropdowns(_):
 )
 def update_plots(selected_location, selected_parameter, start_date, end_date):
 
-      with duckdb.connect("air_quality.db", read_only=True) as db_connection:
+      with duckdb.connect("/workspace/Air-quality-dashboard/notebooks/air_quality.db", read_only=True) as db_connection:
         daily_stats_df = db_connection.execute(
             "SELECT * FROM presentation.daily_air_quality_stats"
         ).fetchdf()
