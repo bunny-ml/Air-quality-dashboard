@@ -1,6 +1,7 @@
 """
 
-Example usage: python pipeline/extraction.py --locations_file_path locations.json --start_date 2025-01 --end_date 2025-03 --database_path notebooks/air_quality.db --extract_query_template_path sql/ddl/dml/raw/0_raw_air_quality_insert.sql --source_base_path s3://openaq-data-archive/records/csv.gz
+Example usage: python3 pipeline/extraction.py --locations_file_path notebooks/locations.json --start_date 2025-01 --end_date 2025-03 --database_path notebooks/air_quality.db --extract_query_template_path sql/dml/raw/0_raw_air_quality_insert.sql --source_base_path s3://openaq-data-archive/records/csv.gz
+
 """
 
 
@@ -62,7 +63,7 @@ def compile_data_file_query(
 def extract_data(args):
     location_ids = read_location_ids(args.locations_file_path)
 
-    data_file_path_template = "location_id={{location_id}}/{{year}}/month={{month}}/*"
+    data_file_path_template = "locationid={{location_id}}/year={{year}}/month={{month}}/*"
 
     data_file_paths = compile_data_file_paths(
         data_file_path_template=data_file_path_template,
