@@ -8,7 +8,7 @@ CREATE OR REPLACE VIEW presentation.air_quality_data AS (
             ) AS rn
         FROM raw.air_quality_data
         WHERE parameter IN ('pm10', 'pm25', 'o3', 'no2', 'no', 'relativehumidity', 'so2', 'co')
-        AND "value" >= 0
+        -- AND "value" >= 0
     )
     SELECT
         location_id,

@@ -62,7 +62,7 @@ def update_map(_):
             "SELECT * FROM presentation.latest_param_values_per_location"
         ).fetchdf()
 
-      latest_values_df.fillna(0, inplace=True)
+      # latest_values_df.fillna(0, inplace=True)
       map_fig = px.scatter_mapbox(
             latest_values_df,
             lat="lat",
