@@ -7,6 +7,7 @@ import pandas as pd
 
 app = dash.Dash(__name__)
 
+server = app.server
 
 app.layout = html.Div([
       dcc.Tabs([
@@ -40,15 +41,22 @@ app.layout = html.Div([
       ])
 ])
 
+
+db_path = os.path.join(os.path.dirname(__file__), '..', 'notebooks', 'air_quality.db')
+
+
 @app.callback(
       Output("map-view", "figure"),
       Input("map-view", "id")
 )
 
 
+
+
+
 def update_map(_):
 
-      with duckdb.connect("/workspace/Air-quality-dashboard/notebooks/air_quality.db", read_only=True) as db_connection:
+      with duckdb.connect(db_path, read_only=True) as db_connection:
         latest_values_df = db_connection.execute(
             "SELECT * FROM presentation.latest_param_values_per_location"
         ).fetchdf()
@@ -94,7 +102,7 @@ def update_map(_):
     Input("location-dropdown", "id"),
 )
 def update_dropdowns(_):
-    with duckdb.connect("/workspace/Air-quality-dashboard/notebooks/air_quality.db", read_only=True) as db_connection:
+    with duckdb.connect(db_path, read_only=True) as db_connection:
         df = db_connection.execute(
             "SELECT * FROM presentation.daily_air_quality_stats"
         ).fetchdf()
@@ -130,7 +138,7 @@ def update_dropdowns(_):
 )
 def update_plots(selected_location, selected_parameter, start_date, end_date):
 
-      with duckdb.connect("/workspace/Air-quality-dashboard/notebooks/air_quality.db", read_only=True) as db_connection:
+      with duckdb.connect(db_path, read_only=True) as db_connection:
         daily_stats_df = db_connection.execute(
             "SELECT * FROM presentation.daily_air_quality_stats"
         ).fetchdf()
