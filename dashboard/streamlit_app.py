@@ -12,17 +12,22 @@ st.set_page_config(layout="wide")
 st.title("Air Quality Dashboard")
 
 # Load sensor data for map
-with duckdb.connect(db_path, read_only=True) as db_connection:
-    latest_values_df = db_connection.execute(
-        "SELECT * FROM presentation.latest_param_values_per_location"
-    ).fetchdf()
+@st.cache_data
+def load_latest_values():
+    with duckdb.connect(db_path, read_only=True) as db_connection:
+        return db_connection.execute(
+            "SELECT * FROM presentation.latest_param_values_per_location"
+        ).fetchdf()
+
+latest_values_df = load_latest_values()
 
 # Tab navigation
 tab1, tab2 = st.tabs(["Sensor Locations", "Parameter Plots"])
 
 with tab1:
     st.subheader("Air Quality Monitoring Locations")
-    map_fig = px.scatter_mapbox(
+
+    map_fig = px.scatter_map(
         latest_values_df,
         lat="lat",
         lon="lon",
@@ -46,13 +51,18 @@ with tab1:
     )
     st.plotly_chart(map_fig, use_container_width=True)
 
+
 with tab2:
     st.subheader("Explore Parameters Over Time")
 
-    with duckdb.connect(db_path, read_only=True) as db_connection:
-        df = db_connection.execute(
-            "SELECT * FROM presentation.daily_air_quality_stats"
-        ).fetchdf()
+    @st.cache_data
+    def load_daily_stats():
+        with duckdb.connect(db_path, read_only=True) as db_connection:
+            return db_connection.execute(
+                "SELECT * FROM presentation.daily_air_quality_stats"
+                ).fetchdf()
+
+    df = load_daily_stats()
 
     # Dropdowns
     location = st.selectbox("Select Location", df["location"].unique())
